@@ -1,0 +1,251 @@
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: #00636e;
+  color: #444;
+  padding-bottom: 32px;
+}
+html *,
+body * {
+  box-sizing: border-box;
+}
+
+.strip {
+  background: #ffdce4;
+  width: 336px;
+  margin: 0 auto;
+  box-shadow: 0 0 16px #444, inset 0 0 8px #ff90a9;
+}
+.strip .ticket {
+  position: relative;
+  padding: 8px 64px 8px 8px;
+}
+.strip .ticket:not(:last-child) {
+  border-bottom: 2px dotted #444;
+}
+.strip .ticket.winner {
+  background: #fae0bd;
+  box-shadow: 0 0 16px #fae0bd;
+}
+.strip .ticket table {
+  background: #fff;
+  border-bottom: 2px solid #444;
+  border-right: 2px solid #444;
+  width: 100%;
+  table-layout: fixed;
+}
+.strip .ticket table td {
+  border-top: 2px solid #444;
+  border-left: 2px solid #444;
+  text-align: center;
+  vertical-align: center;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 28px;
+  position: relative;
+}
+.strip .ticket table td:after {
+  content: "";
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  top: 5%;
+  bottom: 5%;
+  border-radius: 9999px;
+  background-color: #f0f;
+  mix-blend-mode: multiply;
+  opacity: 0;
+  transform: scale(0);
+  transition: opacity 0.5s, transform 0.5s;
+  filter: blur(0.5px);
+}
+.strip .ticket table td.marked:after {
+  opacity: 0.6;
+  transform: scale(1);
+}
+.strip .ticket > .marked {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: 8px;
+  padding: 4px;
+  width: 48px;
+  border: 2px solid #444;
+  border-radius: 8px;
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 1.4;
+  background: linear-gradient(to bottom, #4da04d 0%, #339233 48%, #070 50%);
+  box-shadow: inset 0 1.6px 1.6px rgba(43, 255, 43, 0.5);
+  text-shadow: 0 0 8px #002b00;
+  color: #fff;
+}
+.strip .ticket > .marked > span {
+  display: block;
+}
+.strip .ticket > .marked.close {
+  background: linear-gradient(to bottom, #f3b864 0%, #f1ad4e 48%, #e92 50%);
+  box-shadow: inset 0 1.6px 1.6px rgba(251, 230, 200, 0.5);
+  text-shadow: 0 0 8px #b6700e;
+}
+.strip .ticket > .marked.very.close {
+  background: linear-gradient(to bottom, #f37c4d 0%, #f16933 48%, #e40 50%);
+  box-shadow: inset 0 1.6px 1.6px rgba(255, 188, 162, 0.5);
+  text-shadow: 0 0 8px #a22e00;
+}
+.strip .ticket > .marked.winner {
+  background: linear-gradient(to bottom, #f9deb7 0%, #f9d9ad 48%, #f7d098 50%);
+  box-shadow: inset 0 1.6px 1.6px rgba(255, 255, 255, 0.5);
+  text-shadow: 0 0 8px #f2af51;
+  color: #444;
+}
+.strip .ticket > .marked.winner span {
+  transform: rotate(-90deg);
+  margin-bottom: -2em;
+}
+.strip .ticket > .marked .remaining {
+  font-size: 150%;
+}
+
+.caller {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: 48px;
+  background: rgba(0, 53, 59, 0.8);
+}
+.caller .house {
+  text-align: center;
+  font-size: 48px;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 0 1px #444, 0 0 3px #444, 0 0 5px #444;
+}
+.caller .number {
+  position: absolute;
+  left: -30%;
+  bottom: 8px;
+  width: 72px;
+  height: 72px;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-name: move;
+          animation-name: move;
+  -webkit-animation-timing-function: cubic-bezier(0.15, 1, 0.85, 0);
+          animation-timing-function: cubic-bezier(0.15, 1, 0.85, 0);
+  transform-origin: 50%;
+  z-index: 2;
+}
+.caller .number:before {
+  content: "";
+  position: absolute;
+  top: 48px;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  width: 100%;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.5) 10%, rgba(0, 0, 0, 0) 80%);
+  transform: scale(1, 0.3);
+}
+.caller .number:after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: -8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 9999px;
+  background-color: #fff;
+  opacity: 0.5;
+  transform: scale(0.7, 0.5);
+  mix-blend-mode: overlay;
+  z-index: 3;
+}
+.caller .number .ball {
+  background: radial-gradient(ellipse at center, #fff 0%, #fafafa 40%, #e6e6e6 100%);
+  text-shadow: 0 0 4px #b3b3b3;
+  box-shadow: 0 0 8px rgba(166, 166, 166, 0.4);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 72px;
+  height: 72px;
+  padding: 12px;
+  line-height: 1.4;
+  font-size: 36px;
+  font-weight: 700;
+  text-align: center;
+  border-radius: 9999px;
+  color: #444;
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-name: spin;
+          animation-name: spin;
+  -webkit-animation-timing-function: cubic-bezier(0.15, 1, 0.85, 0);
+          animation-timing-function: cubic-bezier(0.15, 1, 0.85, 0);
+  transform-origin: 50%;
+}
+.caller .number .ball.red {
+  background: radial-gradient(ellipse at center, #e40 0%, #e44100 40%, #bb3500 100%);
+  text-shadow: 0 0 4px #551800;
+  box-shadow: 0 0 8px rgba(60, 17, 0, 0.4);
+  color: #fff;
+}
+.caller .number .ball.yellow {
+  background: radial-gradient(ellipse at center, #e92 0%, #ed9519 40%, #cd7e10 100%);
+  text-shadow: 0 0 4px #6f4409;
+  box-shadow: 0 0 8px rgba(87, 53, 7, 0.4);
+  color: #fff;
+}
+.caller .number .ball.green {
+  background: radial-gradient(ellipse at center, #070 0%, #006d00 40%, #004400 100%);
+  text-shadow: 0 0 4px black;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
+  color: #fff;
+}
+.caller .number .ball.pink {
+  background: radial-gradient(ellipse at center, #ffdce4 0%, #ffd2dc 40%, #ffa9bd 100%);
+  text-shadow: 0 0 4px #ff436e;
+  box-shadow: 0 0 8px rgba(255, 42, 90, 0.4);
+  color: #444;
+}
+
+@-webkit-keyframes move {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+
+@keyframes move {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    transform: rotate(-600deg);
+  }
+  100% {
+    transform: rotate(600deg);
+  }
+}
+@keyframes spin {
+  0% {
+    transform: rotate(-600deg);
+  }
+  100% {
+    transform: rotate(600deg);
+  }
+}

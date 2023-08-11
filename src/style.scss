@@ -1,0 +1,259 @@
+// Variables
+$Unit: 8;
+
+// Colours
+$Black: #444;
+$White: #fff;
+$BodyBG: #00636e;
+$StripBG: #ffdce4;
+$Red: #e40;
+$Yellow: #e92;
+$Green: #070;
+$Marker: #f0f;
+
+// Embellishments
+$Border: 2px solid $Black;
+
+// Utilities
+@mixin gel($Color) {
+  background: linear-gradient(
+    to bottom,
+    mix($White, $Color, 30%) 0%,
+    mix($White, $Color, 20%) 48%,
+    $Color 50%
+  );
+  box-shadow: inset 0 $Unit * 0.2px $Unit * 0.2px
+    transparentize(lighten($Color, 35%), 0.5);
+  text-shadow: 0 0 $Unit * 1px darken($Color, 15%);
+}
+
+@mixin ball-colour($Color) {
+  background: radial-gradient(
+    ellipse at center,
+    $Color 0%,
+    darken($Color, 2%) 40%,
+    darken($Color, 10%) 100%
+  );
+  text-shadow: 0 0 4px darken($Color, 30%);
+  box-shadow: 0 0 $Unit * 1px transparentize(darken($Color, 35%), 0.6);
+}
+
+// Styles
+html,
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: $BodyBG;
+  color: $Black;
+  * {
+    box-sizing: border-box;
+  }
+  padding-bottom: $Unit * 4px;
+}
+
+.strip {
+  background: $StripBG;
+  width: $Unit * 42px;
+  margin: 0 auto;
+  box-shadow: 0 0 $Unit * 2px $Black,
+    inset 0 0 $Unit * 1px darken($StripBG, 15%);
+  .ticket {
+    position: relative;
+    padding: $Unit * 1px $Unit * 8px $Unit * 1px $Unit * 1px;
+    &:not(:last-child) {
+      border-bottom: 2px dotted $Black;
+    }
+    &.winner {
+      background: mix($White, $Yellow, 70%);
+      box-shadow: 0 0 $Unit * 2px mix($White, $Yellow, 70%);
+    }
+    table {
+      background: $White;
+      border-bottom: $Border;
+      border-right: $Border;
+      width: 100%;
+      table-layout: fixed;
+      td {
+        border-top: $Border;
+        border-left: $Border;
+        text-align: center;
+        vertical-align: center;
+        font-size: $Unit * 2.5px;
+        font-weight: 700;
+        line-height: $Unit * 3.5px;
+        position: relative;
+        &:after {
+          content: "";
+          position: absolute;
+          left: 5%;
+          right: 5%;
+          top: 5%;
+          bottom: 5%;
+          border-radius: 9999px;
+          background-color: $Marker;
+          mix-blend-mode: multiply;
+          opacity: 0;
+          transform: scale(0);
+          transition: opacity 0.5s, transform 0.5s;
+          filter: blur(0.5px);
+        }
+        &.marked {
+          &:after {
+            opacity: 0.6;
+            transform: scale(1);
+          }
+        }
+      }
+    }
+    > .marked {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: $Unit * 1px;
+      padding: $Unit * 0.5px;
+      width: $Unit * 6px;
+      border: $Border;
+      border-radius: $Unit * 1px;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      line-height: 1.4;
+      @include gel($Green);
+      color: $White;
+      > span {
+        display: block;
+      }
+      &.close {
+        @include gel($Yellow);
+      }
+      &.very.close {
+        @include gel($Red);
+      }
+      &.winner {
+        @include gel(lighten($Yellow, 25%));
+        color: $Black;
+        span {
+          transform: rotate(-90deg);
+          margin-bottom: -2em;
+        }
+      }
+      .remaining {
+        font-size: 150%;
+      }
+    }
+  }
+}
+
+.caller {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  height: $Unit * 6px;
+  background: transparentize(darken($BodyBG, 10%), 0.2);
+  .house {
+    text-align: center;
+    font-size: $Unit * 6px;
+    font-weight: 700;
+    color: $White;
+    text-shadow: 0 0 1px $Black, 0 0 3px $Black, 0 0 5px $Black;
+  }
+  .number {
+    $BallScale: 1.5;
+    position: absolute;
+    left: -30%;
+    bottom: $Unit * 1px;
+    width: ($Unit * $BallScale) * 6px;
+    height: ($Unit * $BallScale) * 6px;
+    animation-duration: 2s;
+    animation-name: move;
+    animation-timing-function: cubic-bezier(0.15, 1, 0.85, 0);
+    transform-origin: 50%;
+    z-index: 2;
+    &:before {
+      content: "";
+      position: absolute;
+      top: ($Unit * $BallScale) * 4px;
+      left: 0;
+      width: ($Unit * $BallScale) * 4px;
+      height: ($Unit * $BallScale) * 4px;
+      width: 100%;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(0, 0, 0, 0.5) 10%,
+        rgba(0, 0, 0, 0) 80%
+      );
+      transform: scale(1, 0.3);
+    }
+    &:after {
+      content: "";
+      position: absolute;
+      left: ($Unit * $BallScale) * 1px;
+      top: $Unit * -1px;
+      width: ($Unit * $BallScale) * 4px;
+      height: ($Unit * $BallScale) * 4px;
+      border-radius: 9999px;
+      background-color: $White;
+      opacity: 0.5;
+      transform: scale(0.7, 0.5);
+      mix-blend-mode: overlay;
+      z-index: 3;
+    }
+    .ball {
+      @include ball-colour($White);
+      &.red {
+        @include ball-colour($Red);
+        color: $White;
+      }
+      &.yellow {
+        @include ball-colour($Yellow);
+        color: $White;
+      }
+      &.green {
+        @include ball-colour($Green);
+        color: $White;
+      }
+      &.pink {
+        @include ball-colour($StripBG);
+        color: $Black;
+      }
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: ($Unit * $BallScale) * 6px;
+      height: ($Unit * $BallScale) * 6px;
+      padding: ($Unit * $BallScale) * 1px;
+      line-height: 1.4;
+      font-size: ($Unit * $BallScale) * 3px;
+      font-weight: 700;
+      text-align: center;
+      border-radius: 9999px;
+      color: $Black;
+      animation-duration: 2s;
+      animation-name: spin;
+      animation-timing-function: cubic-bezier(0.15, 1, 0.85, 0);
+      transform-origin: 50%;
+    }
+  }
+}
+
+@keyframes move {
+  0% {
+    left: -30%;
+  }
+  100% {
+    left: 125%;
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(-600deg);
+  }
+  100% {
+    transform: rotate(600deg);
+  }
+}
